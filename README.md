@@ -50,3 +50,5 @@ We can choose the lidar model by selecting different CSV file in scan_mode dir f
 - ros_topic: scan // topic in ros
 - samples: 24000  // number of points in each scan loop
 - downsample: 1 // we can increment this para to decrease the consumption
+
+###This repository is now maintained by CaoMing(https://github.com/EpsAvlc) and LvFengchi. Its appreciate with the help of Caoming!
