@@ -13,9 +13,9 @@
   <xacro:macro name="null_inertial">
     <inertial>
       <mass value="0.1"/>
-    <inertia ixx="${(0.83 * (3.0*0.0516*0.0516 + 0.0717*0.0717)) / 12.0}" ixy="0" ixz="0"
-          iyy="${(0.83 * (3.0*0.0516*0.0516 + 0.0717*0.0717)) / 12.0}" iyz="0"
-          izz="${0.5 * 0.83 * (0.0516*0.0516)}"/>
+    <inertia ixx="0.01" ixy="0" ixz="0"
+          iyy="0.01" iyz="0"
+          izz="0.01"/>
     </inertial>
   </xacro:macro>
   <xacro:macro name="Livox_Mid_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002 noise_mean:=0.0 noise_stddev:=0.01 name:=livox">
@@ -94,9 +94,9 @@
     <xacro:Livox_Mid_gazebo_sensor name="${name}" visualize="${visualize}"/>
   </xacro:macro>
   
-  <xacro:Livox_Mid40 name="livox"/>
+  <!-- <xacro:Livox_Mid40 name="livox"/>
   <xacro:include filename="$(find livox_laser_simulation)/urdf/standardrobots_oasis300.xacro"/>
-  <xacro:link_oasis name="oasis"/>
+  <xacro:link_oasis name="oasis"/> -->
   	
   	
 </robot>
