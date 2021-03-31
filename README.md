@@ -24,6 +24,9 @@ A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com)
 ![](resources/horizon.gif)
 
 ## Usage
+
+> Note that the published point cloud message is sensor_msg/PointCloud in main branch. If you want to obtain snesor_msg/PointCloud2 message, you can checkout to "PointCloud2-ver" branch.
+
 Before you write your urdf file by using this plugin, catkin_make/catkin build is needed.
 
 A simple demo is shown in livox_simulation.launch
