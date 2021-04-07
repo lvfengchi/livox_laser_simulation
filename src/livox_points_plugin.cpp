@@ -12,6 +12,7 @@
 #include <gazebo/sensors/RaySensor.hh>
 #include <gazebo/transport/Node.hh>
 #include <pcl_conversions/pcl_conversions.h>
+#include <limits>
 #include "livox_laser_simulation/csv_reader.hpp"
 #include "livox_laser_simulation/livox_ode_multiray_shape.h"
 
@@ -54,6 +55,7 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     int argc = 0;
     char **argv = nullptr;
     auto curr_scan_topic = sdf->Get<std::string>("ros_topic");
+    useInf = sdf->Get<bool>("use_inf");
     ROS_INFO_STREAM("ros topic name:" << curr_scan_topic);
     ros::init(argc, argv, curr_scan_topic);
     rosNode.reset(new ros::NodeHandle);
@@ -130,7 +132,7 @@ void LivoxPointsPlugin::OnNewLaserScans() {
         // scan_point.header.stamp = ros::Time::now();
         // scan_point.header.frame_id = raySensor->Name();
         // auto &scan_points = scan_point.points;
-        pcl::PointCloud<pcl::PointXYZ> scan_points;
+        pcl::PointCloud<pcl::PointXYZI> scan_points;
 
         for (auto &pair : points_pair) {
             int verticle_index = roundf((pair.second.zenith - verticle_min) / verticle_incre);
@@ -142,11 +144,7 @@ void LivoxPointsPlugin::OnNewLaserScans() {
                 auto index = (verticalRayCount - verticle_index - 1) * rayCount + horizon_index;
                 auto range = rayShape->GetRange(pair.first);
                 auto intensity = rayShape->GetRetro(pair.first);
-                if (range >= RangeMax()) {
-                    range = 0;
-                } else if (range <= RangeMin()) {
-                    range = 0;
-                }
+
                 scan->set_ranges(index, range);
                 scan->set_intensities(index, intensity);
 
@@ -157,8 +155,25 @@ void LivoxPointsPlugin::OnNewLaserScans() {
                 //                auto point = range * axis + world_pose.Pos();//转换成世界坐标系
 
                 auto axis = ray * math::Vector3(1.0, 0.0, 0.0);
+                if (range >= RangeMax()) {
+                    if (useInf) {
+                        range = std::numeric_limits<double>::infinity();
+                    } else {
+                        range = RangeMax();
+                    }
+                } else if (range <= RangeMin()) {
+                    range = std::numeric_limits<double>::quiet_NaN();
+                }
                 auto point = range * axis;
-                scan_points.push_back(pcl::PointXYZ(point.x, point.y, point.z));
+                pcl::PointXYZI scan_pt;
+                scan_pt.x = point.x;
+                scan_pt.y = point.y;
+                scan_pt.z = point.z;
+                scan_pt.intensity = 0;
+                if (!useInf && range == RangeMax()) {
+                    scan_pt.intensity = std::numeric_limits<float>::infinity();
+                }
+                scan_points.push_back(scan_pt);
             } else {
                 //                ROS_INFO_STREAM("count is wrong:" << verticle_index << "," << verticalRayCount << ","
                 //                << horizon_index
