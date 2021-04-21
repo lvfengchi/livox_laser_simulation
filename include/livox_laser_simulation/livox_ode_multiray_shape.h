@@ -4,6 +4,7 @@
 
 #ifndef SRC_GAZEBO_LIVOX_ODE_MULTIRAY_SHAPE_H
 #define SRC_GAZEBO_LIVOX_ODE_MULTIRAY_SHAPE_H
+#include <ignition/math/Vector3.hh>
 #include <gazebo/physics/MultiRayShape.hh>
 #include <gazebo/util/system.hh>
 #include <ode/common.h>
@@ -34,8 +35,8 @@ class GZ_PHYSICS_VISIBLE LivoxOdeMultiRayShape : public MultiRayShape{
     /// \brief Add a ray to the collision.
     /// \param[in] _start Start of a ray.
     /// \param[in] _end End of a ray.
-    public: void AddRay(const math::Vector3 &_start,
-                           const math::Vector3 &_end);
+    public: void AddRay(const ignition::math::Vector3<double> &_start,
+                        const ignition::math::Vector3<double> &_end);
 
     /// \brief Space to contain the ray space, for efficiency.
     private: dSpaceID superSpaceId;
