@@ -3,8 +3,9 @@ A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com)
 
 ## Requirements
 - ROS(=Kinectic)
-- Gazebo (= 7.0, http://gazebosim.org/)
-- Ubuntu(=16.04)
+- Gazebo (= 9.x, http://gazebosim.org/)
+- Ubuntu(=18.04)
+- Install `libode-dev`
 
 ## Results
 - avia
