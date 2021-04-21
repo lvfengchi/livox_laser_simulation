@@ -26,6 +26,7 @@ A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com)
 ## Usage
 
 > Note that the published point cloud message is sensor_msg/PointCloud in main branch. If you want to obtain snesor_msg/PointCloud2 message, you can checkout to "PointCloud2-ver" branch.
+> If you use gazebo 9, checkout to "gazebo-9-ver" branch. The gazebo-9 version is maintained by [jp-ipu](https://github.com/jp-ipu).
 
 Before you write your urdf file by using this plugin, catkin_make/catkin build is needed.
 
