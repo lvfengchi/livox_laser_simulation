@@ -6,11 +6,27 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  roslib
   tf
 )
 
 find_package(gazebo REQUIRED)
-include_directories(${GAZEBO_INCLUDE_DIRS})
+find_package(PCL REQUIRED)
+include_directories(
+    ${GAZEBO_INCLUDE_DIRS}
+    ${PCL_INCLUDE_DIRS}
+)
+
+## Generate messages in the 'msg' folder
+add_message_files(FILES
+	CustomPoint.msg
+	CustomMsg.msg
+)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(DEPENDENCIES
+	std_msgs
+)
 
 #To solve the error which gazebo does not handle the include file well, we must add this line.
 include_directories(/usr/include/gazebo-7/gazebo)
@@ -33,6 +49,35 @@ catkin_package(
 )
 
 add_library(livox_laser_simulation SHARED src/livox_points_plugin.cpp src/livox_ode_multiray_shape.cpp)
-target_link_libraries(livox_laser_simulation ${catkin_LIBRARIES} RayPlugin)
+target_link_libraries(livox_laser_simulation
+                ${catkin_LIBRARIES} RayPlugin
+                libprotobuf.so.9)
 
-target_link_libraries(livox_laser_simulation libprotobuf.so.9)
+
+### TEST ###
+add_executable(point_order_test src/test/point_order_test.cpp)
+target_link_libraries(point_order_test
+        ${catkin_LIBRARIES}
+        ${PCL_LIBRARIES}
+        ${GAZEBO_LIBRARIES}
+)
+
+add_executable(point_line_test src/test/point_line_test.cpp)
+target_link_libraries(point_line_test
+        ${catkin_LIBRARIES}
+        ${PCL_LIBRARIES}
+        ${GAZEBO_LIBRARIES}
+)
+
+### INSTALL ###
+install(TARGETS livox_laser_simulation
+	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+	)
+
+install(DIRECTORY
+  launch
+  config
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)

@@ -7,25 +7,28 @@ A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com)
 - Ubuntu(=16.04)
 
 ## Results
-- avia
+![](resources/total.gif)
 
-![](resources/avia.gif)
-- mid40
+## Branchs
 
-![](resources/mid40.gif)
-- mid70
+### main branch
+- enviroment: ROS kinetic + gazebo7
+- pointcloud type: 
+  - sensor_msg::pointcloud
+  - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::PointXYZ\>)
+  - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::LivoxPointXyzrtl\>)
+  <!-- - livox_ros_driver::CustomMsg -->
 
-![](resources/mid70.gif)
-- tele
+### gazebo9
+- enviroment: ROS melodic + gazebo7
+- pointcloud type: sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::PointXYZ\>)
 
-![](resources/tele.gif)
-- horizon
+## Dependence
 
-![](resources/horizon.gif)
+- [livox_ros_driver](https://github.com/Livox-SDK/livox_ros_driver)
 
 ## Usage
 
-> Note that the published point cloud message is sensor_msg/PointCloud in main branch. If you want to obtain snesor_msg/PointCloud2 message, you can checkout to "PointCloud2-ver" branch.
 > If you use gazebo 9, checkout to "gazebo-9-ver" branch. The gazebo-9 version is maintained by [jp-ipu](https://github.com/jp-ipu).
 
 Before you write your urdf file by using this plugin, catkin_make/catkin build is needed.
@@ -38,7 +41,12 @@ Run
 ```
 to see.
 
-We can choose the lidar model by selecting different CSV file in scan_mode dir from changing the launch file:
+Change sensor by change the following lines in the robot.xacro into another xacro file.
+```xml
+  <xacro:include filename="$(find livox_laser_simulation)/urdf/livox_horizon.xacro"/>
+  <Livox_Horizon name="livox" visualize="true" publish_pointcloud_type="2"/>
+```
+
 - avia.csv
 - horizon.csv
 - mid40.csv
@@ -54,5 +62,6 @@ We can choose the lidar model by selecting different CSV file in scan_mode dir f
 - ros_topic: scan // topic in ros
 - samples: 24000  // number of points in each scan loop
 - downsample: 1 // we can increment this para to decrease the consumption
+- publish_pointcloud_type: 0 // 0 for sensor_msgs::PointCloud, 1 for sensor_msgs::Pointcloud2(PointXYZ), 2 for sensor_msgs::PointCloud2(LivoxPointXyzrtl)
 
-### This repository is now maintained by CaoMing(https://github.com/EpsAvlc) and LvFengchi. Its appreciate with the help of Caoming!
+> This repository is now maintained by [EpsAvlc](https://github.com/EpsAvlc) and LvFengchi.
