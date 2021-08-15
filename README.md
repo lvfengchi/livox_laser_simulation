@@ -2,9 +2,8 @@
 A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com).
 
 ## Requirements
-- ROS(=Kinectic)
-- Gazebo (= 7.0, http://gazebosim.org/)
-- Ubuntu(=16.04)
+- ROS(=Kinectic/Melodic)
+- Gazebo (= 7.0/9.0)
 
 ## Results
 ![](resources/total.gif)
