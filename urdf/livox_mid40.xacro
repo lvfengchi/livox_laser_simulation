@@ -13,7 +13,7 @@
   <xacro:property name="csv_file_name" value="package://livox_laser_simulation/scan_mode/mid40.csv"/>
   
   <xacro:include filename="$(find livox_laser_simulation)/urdf/livox_gazebo_sensor.xacro"/>
-  <xacro:macro name="Livox_Mid40" params="visualize:=True name:=livox publish_pointcloud_type:=1">
+  <xacro:macro name="Livox_Mid40" params="visualize:=True name:=livox publish_pointcloud_type:=1 ros_topic:=scan">
     <link name="${name}_base">
       <xacro:null_inertial/>
       <visual> 

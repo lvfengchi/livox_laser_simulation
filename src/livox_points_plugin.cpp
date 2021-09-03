@@ -339,7 +339,6 @@ void LivoxPointsPlugin::PublishPointCloud(std::vector<std::pair<int, AviaRotateI
     scan_point.header.stamp = ros::Time::now();
     scan_point.header.frame_id = raySensor->Name();
     auto &scan_points = scan_point.points;
-
     for (auto &pair : points_pair) {
         int verticle_index = roundf((pair.second.zenith - verticle_min) / verticle_incre);
         int horizon_index = roundf((pair.second.azimuth - angle_min) / angle_incre);
@@ -392,6 +391,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
 
     pcl::PointCloud<pcl::PointXYZ> pc;
     pc.points.reserve(points_pair.size());
+    ros::Time timestamp = ros::Time::now();
     for (auto& pair : points_pair) {
         int verticle_index = roundf((pair.second.zenith - verticle_min) / verticle_incre);
         int horizon_index = roundf((pair.second.azimuth - angle_min) / angle_incre);
@@ -423,8 +423,8 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
         }
     }
     pcl::toROSMsg(pc, scan_point);
-    scan_point.header.stamp = ros::Time::now();
-    scan_point.header.frame_id = raySensor->Name();
+    scan_point.header.stamp = timestamp;
+    scan_point.header.frame_id = "livox";
     rosPointPub.publish(scan_point);
     ros::spinOnce();
     if (scanPub && scanPub->HasConnections()) {
@@ -448,6 +448,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZRTL(std::vector<std::pair<int, Avia
 
     pcl::PointCloud<pcl::LivoxPointXyzrtl> pc;
     pc.points.reserve(points_pair.size());
+    ros::Time timestamp = ros::Time::now();
     for (int i = 0; i < points_pair.size(); ++i) {
         std::pair<int, AviaRotateInfo>& pair = points_pair[i];
         int verticle_index = roundf((pair.second.zenith - verticle_min) / verticle_incre);
@@ -459,10 +460,8 @@ void LivoxPointsPlugin::PublishPointCloud2XYZRTL(std::vector<std::pair<int, Avia
             auto index = (verticalRayCount - verticle_index - 1) * rayCount + horizon_index;
             auto range = rayShape->GetRange(pair.first);
             auto intensity = rayShape->GetRetro(pair.first);
-            if (range >= RangeMax()) {
-                range = 0;
-            } else if (range <= RangeMin()) {
-                range = 0;
+            if (range >= RangeMax() || range <= RangeMin()) {
+                continue;
             }
             scan->set_ranges(index, range);
             scan->set_intensities(index, intensity);
@@ -486,7 +485,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZRTL(std::vector<std::pair<int, Avia
         }
     }
     pcl::toROSMsg(pc, scan_point);
-    scan_point.header.stamp = ros::Time::now();
+    scan_point.header.stamp = timestamp;
     scan_point.header.frame_id = raySensor->Name();
     rosPointPub.publish(scan_point);
     ros::spinOnce();
