@@ -143,8 +143,10 @@ void LivoxPointsPlugin::OnNewLaserScans() {
             break;
         case SENSOR_MSG_POINT_CLOUD2_POINTXYZ:
             PublishPointCloud2XYZ(points_pair);
+            break;
         case SENSOR_MSG_POINT_CLOUD2_LIVOXPOINTXYZRTL:
             PublishPointCloud2XYZRTL(points_pair);
+            break;
         default:
             break;
         }
