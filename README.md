@@ -61,6 +61,11 @@ Change sensor by change the following lines in the robot.xacro into another xacr
 - ros_topic: scan // topic in ros
 - samples: 24000  // number of points in each scan loop
 - downsample: 1 // we can increment this para to decrease the consumption
-- publish_pointcloud_type: 0 // 0 for sensor_msgs::PointCloud, 1 for sensor_msgs::Pointcloud2(PointXYZ), 2 for sensor_msgs::PointCloud2(LivoxPointXyzrtl)
+- publish_pointcloud_type: 0 // 0 for sensor_msgs::PointCloud, 1 for sensor_msgs::Pointcloud2(PointXYZ), 2 for sensor_msgs::PointCloud2(LivoxPointXyzrtl) 3 for livox_ros_driver::CustomMsg.
+
+## Simulation for mapping
+Currently [Fast-LIO](https://github.com/hku-mars/FAST_LIO) is tested when publish_pointcloud_type = 3。
+
+Enjoy it and feel free to report bugs.
 
 > This repository is now maintained by [EpsAvlc](https://github.com/EpsAvlc) and LvFengchi.

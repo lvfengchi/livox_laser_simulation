@@ -3,16 +3,16 @@
   <xacro:macro name="null_inertial">
     <inertial>
       <mass value="0.1"/>
-    <inertia ixx="0.01" ixy="0" ixz="0"
-          iyy="0.01" iyz="0"
-          izz="0.01"/>
+    <inertia ixx="0.001" ixy="0" ixz="0"
+          iyy="0.001" iyz="0"
+          izz="0.001"/>
     </inertial>
   </xacro:macro>
   <xacro:macro name="Livox_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002 noise_mean:=0.0 noise_stddev:=0.01 name:=livox publish_pointcloud_type:=1">
     <gazebo reference="${name}">
       <sensor type="ray" name="laser_${name}">
         <pose>0 0 0 0 0 0</pose>
-        <visualize>${visualize}</visualize>
+        <visualize>True</visualize>
         <update_rate>${update_rate}</update_rate>
         <!-- This ray plgin is only for visualization. -->
         <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">

@@ -8,6 +8,7 @@
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
   <maintainer email="lfc@todo.todo">lfc</maintainer>
+  <maintainer email="hitepsilon@163.com">Cao Ming</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -50,6 +51,7 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>tf</build_depend>
+  <build_depend>livox_ros_driver</build_depend>
   <build_export_depend>tf</build_export_depend>
   <exec_depend>tf</exec_depend>
 
