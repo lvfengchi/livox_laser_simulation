@@ -16,6 +16,7 @@ A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com)
   - sensor_msg::pointcloud
   - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::PointXYZ\>)
   - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::LivoxPointXyzrtl\>)
+  - livox_ros_driver::CustomMsg
   <!-- - livox_ros_driver::CustomMsg -->
 
 ### gazebo9
