@@ -25,12 +25,6 @@ if (OPENMP_FOUND)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-## Generate messages in the 'msg' folder
-add_message_files(FILES
-	CustomPoint.msg
-	CustomMsg.msg
-)
-
 ## Generate added messages and services with any dependencies listed here
 generate_messages(DEPENDENCIES
 	std_msgs
