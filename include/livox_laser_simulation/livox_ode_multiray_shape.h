@@ -7,7 +7,7 @@
 #include <ignition/math/Vector3.hh>
 #include <gazebo/physics/MultiRayShape.hh>
 #include <gazebo/util/system.hh>
-#include <ode/common.h>
+#include <gazebo/ode/common.h>
 
 namespace gazebo{
 namespace physics{

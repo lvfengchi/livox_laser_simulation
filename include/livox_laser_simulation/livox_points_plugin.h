@@ -14,7 +14,9 @@ struct AviaRotateInfo {
     double time;
     double azimuth;
     double zenith;
+    uint8_t line;
 };
+
 
 class LivoxPointsPlugin : public RayPlugin {
  public:
@@ -73,12 +75,24 @@ class LivoxPointsPlugin : public RayPlugin {
     virtual void OnNewLaserScans();
 
  private:
+    enum PointCloudType {
+        SENSOR_MSG_POINT_CLOUD = 0,
+        SENSOR_MSG_POINT_CLOUD2_POINTXYZ = 1,
+        SENSOR_MSG_POINT_CLOUD2_LIVOXPOINTXYZRTL = 2,
+        LIVOX_ROS_DRIVER_CUSTOM_MSG = 3,
+    };
+
     void InitializeRays(std::vector<std::pair<int, AviaRotateInfo>>& points_pair,
                         boost::shared_ptr<physics::LivoxOdeMultiRayShape>& ray_shape);
 
     void InitializeScan(msgs::LaserScan*& scan);
 
     void SendRosTf(const ignition::math::Pose3d& pose, const std::string& father_frame, const std::string& child_frame);
+
+    void PublishPointCloud(std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
+    void PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
+    void PublishPointCloud2XYZRTL(std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
+    void PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
 
     boost::shared_ptr<physics::LivoxOdeMultiRayShape> rayShape;
     gazebo::physics::CollisionPtr laserCollision;
@@ -98,6 +112,8 @@ class LivoxPointsPlugin : public RayPlugin {
     int64_t currStartIndex = 0;
     int64_t maxPointSize = 1000;
     int64_t downSample = 1;
+    uint16_t publishPointCloudType;
+    bool visualize = false;
 
     double maxDist = 400.0;
     double minDist = 0.1;
