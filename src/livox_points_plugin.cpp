@@ -94,6 +94,7 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     ROS_INFO_STREAM("downsample:" << downSample);
 
     publishPointCloudType = sdfPtr->Get<uint16_t>("publish_pointcloud_type");
+    ROS_WARN_STREAM("publish_pointcloud_type: " << publishPointCloudType);
     ros::init(argc, argv, curr_scan_topic);
     rosNode.reset(new ros::NodeHandle);
     switch (publishPointCloudType) {
@@ -343,11 +344,11 @@ void LivoxPointsPlugin::PublishPointCloud(std::vector<std::pair<int, AviaRotateI
 
     msgs::LaserScan *scan = laserMsg.mutable_scan();
     InitializeScan(scan);
-    SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
+    // SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
 
     sensor_msgs::PointCloud scan_point;
     scan_point.header.stamp = ros::Time::now();
-    scan_point.header.frame_id = raySensor->Name();
+    scan_point.header.frame_id = "livox";
     auto &scan_points = scan_point.points;
     for (auto &pair : points_pair) {
         int verticle_index = roundf((pair.second.zenith - verticle_min) / verticle_incre);
@@ -445,7 +446,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
     scan_point.header.stamp = timestamp;
     scan_point.header.frame_id = "livox";
     rosPointPub.publish(scan_point);
-    SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
+    // SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
     ros::spinOnce();
     if (scanPub && scanPub->HasConnections() && visualize) {
         scanPub->Publish(laserMsg);
@@ -462,7 +463,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZRTL(std::vector<std::pair<int, Avia
 
     msgs::LaserScan *scan = laserMsg.mutable_scan();
     InitializeScan(scan);
-    SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
+    // SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
 
     sensor_msgs::PointCloud2 scan_point;
 
@@ -506,7 +507,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZRTL(std::vector<std::pair<int, Avia
     }
     pcl::toROSMsg(pc, scan_point);
     scan_point.header.stamp = timestamp;
-    scan_point.header.frame_id = raySensor->Name();
+    scan_point.header.frame_id = "livox";
     rosPointPub.publish(scan_point);
     ros::spinOnce();
     if (scanPub && scanPub->HasConnections() && visualize) {
@@ -524,12 +525,13 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
 
     msgs::LaserScan *scan = laserMsg.mutable_scan();
     InitializeScan(scan);
-    SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
+    // SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
 
     sensor_msgs::PointCloud2 scan_point;
 
     livox_ros_driver::CustomMsg msg;
-    msg.header.frame_id = raySensor->Name();
+    // msg.header.frame_id = raySensor->ParentName();
+    msg.header.frame_id = "livox";
     msg.timebase = ros::Time::now().toNSec();
     msg.header.stamp = ros::Time::now();
     ros::Time timestamp = ros::Time::now();

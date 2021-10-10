@@ -7,11 +7,13 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
+  livox_ros_driver
 )
 
 find_package(gazebo REQUIRED)
 find_package(PCL REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
+
 
 #To solve the error which gazebo does not handle the include file well, we must add this line.
 include_directories(/usr/include/gazebo-7/gazebo)

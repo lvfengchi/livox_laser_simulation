@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="null_inertial">
+    <inertial>
+      <mass value="0.1"/>
+    <inertia ixx="0.001" ixy="0" ixz="0"
+          iyy="0.001" iyz="0"
+          izz="0.001"/>
+    </inertial>
+  </xacro:macro>
+  <xacro:macro name="Livox_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002 noise_mean:=0.0 noise_stddev:=0.01 name:=livox publish_pointcloud_type:=1">
+    <gazebo reference="${name}">
+      <sensor type="ray" name="livox_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>True</visualize>
+        <update_rate>${update_rate}</update_rate>
+        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+          <ray>
+            <scan>
+            <horizontal>
+            <samples>100</samples>
+            <resolution>1</resolution>
+            <min_angle>${-horizontal_fov/360*M_PI}</min_angle>
+            <max_angle>${horizontal_fov/360*M_PI}</max_angle>
+            </horizontal>
+            <vertical>
+            <samples>50</samples>
+            <resolution>1</resolution>
+            <min_angle>${-vertical_fov/360*M_PI}</min_angle>
+            <max_angle>${vertical_fov/360*M_PI}</max_angle>
+            </vertical>
+            </scan>
+            <range>
+            <min>${laser_min_range}</min>
+            <max>${laser_max_range}</max>
+            <resolution>${resolution}</resolution>
+            </range>
+            <noise>
+            <type>gaussian</type>
+            <mean>${noise_mean}</mean>
+            <stddev>${noise_stddev}</stddev>
+            </noise>
+          </ray>
+          <visualize>${visualize}</visualize>
+          <samples>${samples}</samples>
+          <downsample>${downsample}</downsample>
+          <csv_file_name>${csv_file_name}</csv_file_name>
+          <publish_pointcloud_type>${publish_pointcloud_type}</publish_pointcloud_type>
+          <ros_topic>${ros_topic}</ros_topic>
+        </plugin>
+      </sensor>
+      <sensor name="livox_imu" type="imu">
+        <always_on>true</always_on>
+        <update_rate>50</update_rate>
+        <visualize>false</visualize>
+        <topic>"/livox/imu"</topic>
+        <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+          <topicName>/livox/imu</topicName>
+          <bodyName>imu_link</bodyName>
+          <updateRateHZ>10.0</updateRateHZ>
+          <xyzOffset>0 0 0</xyzOffset>
+          <!-- <gaussianNoise>0.0026399240948208127</gaussianNoise> -->
+          <gaussianNoise>0.00</gaussianNoise>
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>imu_link</frameName>
+          <initialOrientationAsReference>false</initialOrientationAsReference>
+        </plugin>
+        <pose>0 0 0 0 0 0</pose>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

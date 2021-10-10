@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find livox_laser_simulation)/urdf/livox_horizon.xacro"/>
+  <Livox_Horizon name="livox" visualize="true" publish_pointcloud_type="3" downsample="1"/>
+  <xacro:include filename="$(find livox_laser_simulation)/urdf/standardrobots_oasis300.xacro"/>
+  <xacro:link_oasis name="oasis"/>
+</robot>
