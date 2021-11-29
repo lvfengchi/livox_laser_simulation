@@ -531,8 +531,13 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
 
     livox_ros_driver::CustomMsg msg;
     // msg.header.frame_id = raySensor->ParentName();
+
     msg.header.frame_id = "livox";
-    msg.timebase = ros::Time::now().toNSec();
+
+    struct timespec tn; 
+    clock_gettime(CLOCK_REALTIME, &tn);
+
+    msg.timebase = tn.tv_nsec;
     msg.header.stamp = ros::Time::now();
     ros::Time timestamp = ros::Time::now();
     for (int i = 0; i < points_pair.size(); ++i) {
@@ -566,11 +571,16 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
             pt.y = point.Y();
             pt.z = point.Z();
             pt.line = pair.second.line;
-            pt.offset_time = ros::Time::now().toNSec() - msg.timebase;
-            pt.tag = 0;
-            pt.reflectivity = static_cast<float>(intensity);
+            // ROS_INFO_STREAM("offset_time: " << pt.offset_time );
+            pt.tag = 0x10;
+            pt.reflectivity = 100;
             msg.points.push_back(pt);
         }
+    }
+    clock_gettime(CLOCK_REALTIME, &tn);
+    uint64_t interval = tn.tv_nsec - msg.timebase;
+    for (int i = 0; i < msg.points.size(); ++i) {
+        msg.points[i].offset_time = (float)interval / msg.points.size() * i;
     }
     msg.point_num = msg.points.size();
     rosPointPub.publish(msg);

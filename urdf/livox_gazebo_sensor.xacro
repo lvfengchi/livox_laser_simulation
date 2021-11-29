@@ -51,18 +51,18 @@
       </sensor>
       <sensor name="livox_imu" type="imu">
         <always_on>true</always_on>
-        <update_rate>50</update_rate>
+        <update_rate>200</update_rate>
         <visualize>false</visualize>
         <topic>"/livox/imu"</topic>
         <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
           <topicName>/livox/imu</topicName>
-          <bodyName>imu_link</bodyName>
-          <updateRateHZ>10.0</updateRateHZ>
+          <bodyName>livox_imu_link</bodyName>
+          <updateRateHZ>200.0</updateRateHZ>
           <xyzOffset>0 0 0</xyzOffset>
           <!-- <gaussianNoise>0.0026399240948208127</gaussianNoise> -->
           <gaussianNoise>0.00</gaussianNoise>
           <rpyOffset>0 0 0</rpyOffset>
-          <frameName>imu_link</frameName>
+          <frameName>livox_imu_link</frameName>
           <initialOrientationAsReference>false</initialOrientationAsReference>
         </plugin>
         <pose>0 0 0 0 0 0</pose>

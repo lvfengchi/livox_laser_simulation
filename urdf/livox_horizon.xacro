@@ -16,7 +16,7 @@
     <link name="${name}_base">
       <xacro:null_inertial/>
       <visual> 
-        <origin xyz="0.07 0 0.05" rpy="0 0 0"/>
+        <origin xyz="0.00 0 0.00" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://livox_laser_simulation/meshes/livox_mid40.dae">
           </mesh>
@@ -24,7 +24,7 @@
       </visual>
 
       <collision>
-		  <origin xyz="0.07 0 0.05" rpy="0 0 0" />
+		  <origin xyz="0.00 0 0.00" rpy="0 0 0" />
       <geometry>
         <mesh filename="package://livox_laser_simulation/meshes/livox_mid40.dae"> 
 		    </mesh>
@@ -40,6 +40,15 @@
       <child link="${name}"/>
       <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
     </joint>
+
+    <link name="${name}_imu_link"/>
+
+    <joint name="imu_link_joint" type="fixed">
+      <parent link="${name}"/>
+      <child link="${name}_imu_link"/>
+      <origin rpy="0 0 0" xyz="-0.05512 -0.02226 0.0297"/>
+    </joint>
+
     <xacro:Livox_gazebo_sensor name="${name}" visualize="${visualize}" publish_pointcloud_type="${publish_pointcloud_type}"/>
   </xacro:macro>
 </robot>
