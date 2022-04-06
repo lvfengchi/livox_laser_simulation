@@ -8,7 +8,10 @@
           izz="0.001"/>
     </inertial>
   </xacro:macro>
-  <xacro:macro name="Livox_gazebo_sensor" params="visualize:=True update_rate:=10 resolution:=0.002 noise_mean:=0.0 noise_stddev:=0.01 name:=livox publish_pointcloud_type:=1">
+  <xacro:macro name="Livox_gazebo_sensor"
+               params="visualize:=True update_rate:=10 resolution:=0.002
+                       noise_mean:=0.0 noise_stddev:=0.01 imu_noise_stddev:=0.0026399240948208127
+                       name:=livox publish_pointcloud_type:=1">
     <gazebo reference="${name}">
       <sensor type="ray" name="livox_lidar">
         <pose>0 0 0 0 0 0</pose>
@@ -20,14 +23,14 @@
             <horizontal>
             <samples>100</samples>
             <resolution>1</resolution>
-            <min_angle>${-horizontal_fov/360*M_PI}</min_angle>
-            <max_angle>${horizontal_fov/360*M_PI}</max_angle>
+            <min_angle>${-horizontal_fov/360*pi}</min_angle>
+            <max_angle>${horizontal_fov/360*pi}</max_angle>
             </horizontal>
             <vertical>
             <samples>50</samples>
             <resolution>1</resolution>
-            <min_angle>${-vertical_fov/360*M_PI}</min_angle>
-            <max_angle>${vertical_fov/360*M_PI}</max_angle>
+            <min_angle>${-vertical_fov/360*pi}</min_angle>
+            <max_angle>${vertical_fov/360*pi}</max_angle>
             </vertical>
             </scan>
             <range>
@@ -50,22 +53,20 @@
         </plugin>
       </sensor>
       <sensor name="livox_imu" type="imu">
+        <pose>0 0 0 0 0 0</pose>
         <always_on>true</always_on>
         <update_rate>200</update_rate>
         <visualize>false</visualize>
-        <topic>"/livox/imu"</topic>
         <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
           <topicName>/livox/imu</topicName>
           <bodyName>livox_imu_link</bodyName>
           <updateRateHZ>200.0</updateRateHZ>
           <xyzOffset>0 0 0</xyzOffset>
-          <!-- <gaussianNoise>0.0026399240948208127</gaussianNoise> -->
-          <gaussianNoise>0.00</gaussianNoise>
+          <gaussianNoise>${imu_noise_stddev}</gaussianNoise>
           <rpyOffset>0 0 0</rpyOffset>
           <frameName>livox_imu_link</frameName>
           <initialOrientationAsReference>false</initialOrientationAsReference>
         </plugin>
-        <pose>0 0 0 0 0 0</pose>
       </sensor>
     </gazebo>
   </xacro:macro>
