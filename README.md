@@ -11,17 +11,14 @@ A package to provide plug-in for [Livox Series LiDAR](https://www.livoxtech.com)
 ## Branchs
 
 ### main branch
-- enviroment: ROS kinetic + gazebo7
-- pointcloud type: 
+- enviroment: ROS Melodic + Gazebo 9
+- pointcloud type:
   - sensor_msg::pointcloud
-  - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::PointXYZ\>)
+  - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::PointXYZI\>)
   - sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::LivoxPointXyzrtl\>)
   - livox_ros_driver::CustomMsg
-  <!-- - livox_ros_driver::CustomMsg -->
 
-### gazebo9
-- enviroment: ROS melodic + gazebo7
-- pointcloud type: sensor_msg::pointcloud2(pcl::Pointcloud\<pcl::PointXYZ\>)
+
 
 ## Dependence
 
@@ -35,7 +32,7 @@ Before you write your urdf file by using this plugin, catkin_make/catkin build i
 
 A simple demo is shown in livox_simulation.launch
 
-Run 
+Run
 ```
     roslauch livox_laser_simulation livox_simulation.launch
 ```
@@ -53,7 +50,7 @@ Change sensor by change the following lines in the robot.xacro into another xacr
 - mid70.csv
 - tele.csv
 
-## Parameters(example by avia)
+## Parameters(example by Avia)
 
 - laser_min_range: 0.1  // min detection range
 - laser_max_range: 200.0  // max detection range
@@ -62,7 +59,7 @@ Change sensor by change the following lines in the robot.xacro into another xacr
 - ros_topic: scan // topic in ros
 - samples: 24000  // number of points in each scan loop
 - downsample: 1 // we can increment this para to decrease the consumption
-- publish_pointcloud_type: 0 // 0 for sensor_msgs::PointCloud, 1 for sensor_msgs::Pointcloud2(PointXYZ), 2 for sensor_msgs::PointCloud2(LivoxPointXyzrtl) 3 for livox_ros_driver::CustomMsg.
+- publish_pointcloud_type: 0 // 0 for sensor_msgs::PointCloud, 1 for sensor_msgs::Pointcloud2(PointXYZI), 2 for sensor_msgs::PointCloud2(LivoxPointXyzrtl) 3 for livox_ros_driver::CustomMsg.
 
 ## Simulation for mapping
 Currently [Fast-LIO](https://github.com/hku-mars/FAST_LIO) is tested when publish_pointcloud_type = 3。
