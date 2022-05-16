@@ -177,7 +177,7 @@ void LivoxPointsPlugin::InitializeRays(std::vector<std::pair<int, AviaRotateInfo
         auto &rotate_info = aviaInfos[index];
         ray.SetFromEuler(math::Vector3(0.0, rotate_info.zenith, rotate_info.azimuth));
         auto axis = offset.rot * ray * math::Vector3(1.0, 0.0, 0.0);
-        start_point = minDist * axis + offset.pos;
+        start_point = offset.pos;
         end_point = maxDist * axis + offset.pos;
         if (ray_index < ray_size) {
             rays[ray_index]->SetPoints(start_point, end_point);
