@@ -127,7 +127,7 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
         ignition::math::Quaterniond ray;
         ray.Euler(ignition::math::Vector3d(0.0, rotate_info.zenith, rotate_info.azimuth));
         auto axis = offset.Rot() * ray * ignition::math::Vector3d(1.0, 0.0, 0.0);
-        start_point = minDist * axis + offset.Pos();
+        start_point = offset.Pos();
         end_point = maxDist * axis + offset.Pos();
         rayShape->AddRay(start_point, end_point);
     }
