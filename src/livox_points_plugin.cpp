@@ -7,6 +7,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/PointCloud.h>
+#include <ignition/math/Vector3.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/MultiRayShape.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -93,7 +94,7 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     ROS_INFO_STREAM("sample:" << samplesStep);
     ROS_INFO_STREAM("downsample:" << downSample);
 
-    publishPointCloudType = sdfPtr->Get<uint16_t>("publish_pointcloud_type");
+    publishPointCloudType = sdfPtr->Get<int>("publish_pointcloud_type");
     ROS_INFO_STREAM("publish_pointcloud_type: " << publishPointCloudType);
     ros::init(argc, argv, curr_scan_topic);
     rosNode.reset(new ros::NodeHandle);
@@ -124,10 +125,10 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     for (int j = 0; j < samplesStep; j += downSample) {
         int index = j % maxPointSize;
         auto &rotate_info = aviaInfos[index];
-        ignition::math::Quaterniond ray;
+        ignition::math::Quaternion<double> ray;
         ray.Euler(ignition::math::Vector3d(0.0, rotate_info.zenith, rotate_info.azimuth));
         auto axis = offset.Rot() * ray * ignition::math::Vector3d(1.0, 0.0, 0.0);
-        start_point = minDist * axis + offset.Pos();
+        start_point = offset.Pos();
         end_point = maxDist * axis + offset.Pos();
         rayShape->AddRay(start_point, end_point);
     }
@@ -176,7 +177,7 @@ void LivoxPointsPlugin::InitializeRays(std::vector<std::pair<int, AviaRotateInfo
         auto &rotate_info = aviaInfos[index];
         ray.Euler(ignition::math::Vector3d(0.0, rotate_info.zenith, rotate_info.azimuth));
         auto axis = offset.Rot() * ray * ignition::math::Vector3d(1.0, 0.0, 0.0);
-        start_point = minDist * axis + offset.Pos();
+        start_point = offset.Pos();
         end_point = maxDist * axis + offset.Pos();
         if (ray_index < ray_size) {
             rays[ray_index]->SetPoints(start_point, end_point);
