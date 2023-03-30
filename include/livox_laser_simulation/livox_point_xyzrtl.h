@@ -1,5 +1,5 @@
 
-  
+
 /*
  * Created on Sun Aug 15 2021
  *
@@ -26,7 +26,7 @@ struct LivoxPointXyzrtl{
 
 }
 
-POINT_CLOUD_REGISTER_POINT_STRUCT (LivoxPointXyzrtl,  
+POINT_CLOUD_REGISTER_POINT_STRUCT (LivoxPointXyzrtl,
                                    (float, x, x)
                                    (float, y, y)
                                    (float, z, z)

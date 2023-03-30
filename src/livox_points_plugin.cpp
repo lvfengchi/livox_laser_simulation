@@ -7,6 +7,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/PointCloud.h>
+#include <ignition/math/Vector3.hh>
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/MultiRayShape.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
@@ -93,15 +94,15 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     ROS_INFO_STREAM("sample:" << samplesStep);
     ROS_INFO_STREAM("downsample:" << downSample);
 
-    publishPointCloudType = sdfPtr->Get<uint16_t>("publish_pointcloud_type");
-    ROS_WARN_STREAM("publish_pointcloud_type: " << publishPointCloudType);
+    publishPointCloudType = sdfPtr->Get<int>("publish_pointcloud_type");
+    ROS_INFO_STREAM("publish_pointcloud_type: " << publishPointCloudType);
     ros::init(argc, argv, curr_scan_topic);
     rosNode.reset(new ros::NodeHandle);
     switch (publishPointCloudType) {
         case SENSOR_MSG_POINT_CLOUD:
             rosPointPub = rosNode->advertise<sensor_msgs::PointCloud>(curr_scan_topic, 5);
             break;
-        case SENSOR_MSG_POINT_CLOUD2_POINTXYZ:
+        case SENSOR_MSG_POINT_CLOUD2_POINTXYZI:
         case SENSOR_MSG_POINT_CLOUD2_LIVOXPOINTXYZRTL:
             rosPointPub = rosNode->advertise<sensor_msgs::PointCloud2>(curr_scan_topic, 5);
             break;
@@ -124,7 +125,7 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     for (int j = 0; j < samplesStep; j += downSample) {
         int index = j % maxPointSize;
         auto &rotate_info = aviaInfos[index];
-        ignition::math::Quaterniond ray;
+        ignition::math::Quaternion<double> ray;
         ray.Euler(ignition::math::Vector3d(0.0, rotate_info.zenith, rotate_info.azimuth));
         auto axis = offset.Rot() * ray * ignition::math::Vector3d(1.0, 0.0, 0.0);
         start_point = offset.Pos();
@@ -145,8 +146,8 @@ void LivoxPointsPlugin::OnNewLaserScans() {
             case SENSOR_MSG_POINT_CLOUD:
                 PublishPointCloud(points_pair);
                 break;
-            case SENSOR_MSG_POINT_CLOUD2_POINTXYZ:
-                PublishPointCloud2XYZ(points_pair);
+            case SENSOR_MSG_POINT_CLOUD2_POINTXYZI:
+                PublishPointCloud2XYZI(points_pair);
                 break;
             case SENSOR_MSG_POINT_CLOUD2_LIVOXPOINTXYZRTL:
                 PublishPointCloud2XYZRTL(points_pair);
@@ -383,7 +384,7 @@ void LivoxPointsPlugin::PublishPointCloud(std::vector<std::pair<int, AviaRotateI
     }
 }
 
-void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRotateInfo>> &points_pair) {
+void LivoxPointsPlugin::PublishPointCloud2XYZI(std::vector<std::pair<int, AviaRotateInfo>> &points_pair) {
     auto rayCount = RayCount();
     auto verticalRayCount = VerticalRayCount();
     auto angle_min = AngleMin().Radian();
@@ -396,7 +397,7 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
 
     sensor_msgs::PointCloud2 scan_point;
 
-    pcl::PointCloud<pcl::PointXYZ> pc;
+    pcl::PointCloud<pcl::PointXYZI> pc;
     pc.points.resize(points_pair.size());
     ros::Time timestamp = ros::Time::now();
     int pt_count = 0;
@@ -409,9 +410,9 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
             continue;
         }
         if (verticle_index < verticalRayCount && horizon_index < rayCount) {
-            auto index = (verticalRayCount - verticle_index - 1) * rayCount + horizon_index;
-            auto range = rayShape->GetRange(pair.first);
-            auto intensity = rayShape->GetRetro(pair.first);
+            const auto index = (verticalRayCount - verticle_index - 1) * rayCount + horizon_index;
+            const auto range = rayShape->GetRange(pair.first);
+            const auto intensity = rayShape->GetRetro(pair.first);
             if (range >= RangeMax() || range <= RangeMin() || range < 0.1) continue;
 
             scan->set_ranges(index, range);
@@ -420,20 +421,14 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
             auto rotate_info = pair.second;
             ignition::math::Quaterniond ray;
             ray.Euler(ignition::math::Vector3d(0.0, rotate_info.zenith, rotate_info.azimuth));
-            //                auto axis = rotate * ray * math::Vector3(1.0, 0.0, 0.0);
-            //                auto point = range * axis + world_pose.Pos();//转换成世界坐标系
-
             auto axis = ray * ignition::math::Vector3d(1.0, 0.0, 0.0);
-
-            // if (range < 0.3) {
-            //     ROS_WARN_STREAM("Small pt: range: " << range << ", axis: " << axis);
-            // }
             auto point = range * axis;
-            pcl::PointXYZ pt;
+
+            pcl::PointXYZI pt;
             pt.x = point.X();
             pt.y = point.Y();
             pt.z = point.Z();
-            // if (pt_count < pc.size() && pt_count > 0)
+            pt.intensity = static_cast<float>(intensity);
 #pragma omp critical
             {
                 pc[pt_count] = pt;
@@ -446,7 +441,6 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
     scan_point.header.stamp = timestamp;
     scan_point.header.frame_id = "livox";
     rosPointPub.publish(scan_point);
-    // SendRosTf(parentEntity->WorldPose(), world->Name(), raySensor->ParentName());
     ros::spinOnce();
     if (scanPub && scanPub->HasConnections() && visualize) {
         scanPub->Publish(laserMsg);
@@ -534,7 +528,7 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
 
     msg.header.frame_id = "livox";
 
-    struct timespec tn; 
+    struct timespec tn;
     clock_gettime(CLOCK_REALTIME, &tn);
 
     msg.timebase = tn.tv_nsec;
@@ -565,15 +559,13 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
 
             auto axis = ray * ignition::math::Vector3d(1.0, 0.0, 0.0);
             auto point = range * axis;
-            // pt.reflectivity = static_cast<float>(intensity);
             livox_ros_driver::CustomPoint pt;
             pt.x = point.X();
             pt.y = point.Y();
             pt.z = point.Z();
-            pt.line = pair.second.line;
-            // ROS_INFO_STREAM("offset_time: " << pt.offset_time );
-            pt.tag = 0x10;
             pt.reflectivity = 100;
+            pt.line = pair.second.line;
+            pt.tag = 0x10;
             msg.points.push_back(pt);
         }
     }
