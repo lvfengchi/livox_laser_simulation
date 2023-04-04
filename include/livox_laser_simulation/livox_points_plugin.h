@@ -20,9 +20,9 @@ struct AviaRotateInfo {
 
 class LivoxPointsPlugin : public RayPlugin {
  public:
-    LivoxPointsPlugin();
+    LivoxPointsPlugin() = default;
 
-    virtual ~LivoxPointsPlugin();
+    virtual ~LivoxPointsPlugin() = default;
 
     void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
 
@@ -107,6 +107,8 @@ class LivoxPointsPlugin : public RayPlugin {
     std::shared_ptr<ros::NodeHandle> rosNode;
     ros::Publisher rosPointPub;
     std::shared_ptr<tf::TransformBroadcaster> tfBroadcaster;
+
+    std::string namespace_{""};
 
     int64_t samplesStep = 0;
     int64_t currStartIndex = 0;

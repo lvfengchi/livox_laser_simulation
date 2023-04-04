@@ -3,9 +3,9 @@
   <xacro:macro name="null_inertial">
     <inertial>
       <mass value="0.1"/>
-    <inertia ixx="0.001" ixy="0" ixz="0"
-          iyy="0.001" iyz="0"
-          izz="0.001"/>
+      <inertia ixx="0.001" ixy="0" ixz="0"
+               iyy="0.001" iyz="0"
+               izz="0.001"/>
     </inertial>
   </xacro:macro>
   <xacro:macro name="Livox_gazebo_sensor"
@@ -50,6 +50,7 @@
           <csv_file_name>${csv_file_name}</csv_file_name>
           <publish_pointcloud_type>${publish_pointcloud_type}</publish_pointcloud_type>
           <ros_topic>${ros_topic}</ros_topic>
+          <robotNamespace>livox</robotNamespace>
         </plugin>
       </sensor>
       <sensor name="livox_imu" type="imu">
@@ -58,7 +59,8 @@
         <update_rate>200</update_rate>
         <visualize>false</visualize>
         <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-          <topicName>/livox/imu</topicName>
+          <robotNamespace>livox</robotNamespace>
+          <topicName>imu</topicName>
           <bodyName>livox_imu_link</bodyName>
           <updateRateHZ>200.0</updateRateHZ>
           <xyzOffset>0 0 0</xyzOffset>

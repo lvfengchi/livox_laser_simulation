@@ -57,8 +57,7 @@ void LivoxOdeMultiRayShape::UpdateRays()
     ODEPhysicsPtr ode = boost::dynamic_pointer_cast<ODEPhysics>(
         this->GetWorld()->Physics());
 
-    if (ode == NULL)
-        gzthrow("Invalid physics engine. Must use ODE.");
+    GZ_ASSERT(ode, "Invalid physics engine. Must use ODE.");
 
     // Do we need to lock the physics engine here? YES!
     // especially when spawning models with sensors
@@ -122,7 +121,7 @@ void LivoxOdeMultiRayShape::UpdateCallback(void *_data, dGeomID _o1, dGeomID _o2
         ODECollision *hitCollision = NULL;
 
         // Figure out which one is a ray; note that this assumes
-        // that the ODE dRayClass is used *soley* by the RayCollision.
+        // that the ODE dRayClass is used *solely* by the RayCollision.
         if (dGeomGetClass(_o1) == dRayClass)
         {
             rayCollision = static_cast<ODECollision*>(collision1);
@@ -142,7 +141,7 @@ void LivoxOdeMultiRayShape::UpdateCallback(void *_data, dGeomID _o1, dGeomID _o2
         // Check for ray/collision intersections
         if (rayCollision && hitCollision)
         {
-            int n = dCollide(_o1, _o2, 1, &contact, sizeof(contact));
+            const int n = dCollide(_o1, _o2, 1, &contact, sizeof(contact));
 
             if (n > 0)
             {
@@ -150,17 +149,6 @@ void LivoxOdeMultiRayShape::UpdateCallback(void *_data, dGeomID _o1, dGeomID _o2
                     rayCollision->GetShape());
                 if (contact.depth < shape->GetLength())
                 {
-                    // gzerr << "LivoxOdeMultiRayShape UpdateCallback dSpaceCollide2 "
-                    //      << " depth[" << contact.depth << "]"
-                    //      << " position[" << contact.pos[0]
-                    //        << ", " << contact.pos[1]
-                    //        << ", " << contact.pos[2]
-                    //        << ", " << "]"
-                    //      << " ray[" << rayCollision->GetScopedName() << "]"
-                    //      << " pose[" << rayCollision->GetWorldPose() << "]"
-                    //      << " hit[" << hitCollision->GetScopedName() << "]"
-                    //      << " pose[" << hitCollision->GetWorldPose() << "]"
-                    //      << "\n";
                     shape->SetLength(contact.depth);
                     shape->SetRetro(hitCollision->GetLaserRetro());
                 }
