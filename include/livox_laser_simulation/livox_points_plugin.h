@@ -113,7 +113,10 @@ class LivoxPointsPlugin : public RayPlugin {
     int64_t maxPointSize = 1000;
     int64_t downSample = 1;
     uint16_t publishPointCloudType;
+    std::string frameName = "livox";
+
     bool visualize = false;
+
 
     double maxDist = 400.0;
     double minDist = 0.1;
